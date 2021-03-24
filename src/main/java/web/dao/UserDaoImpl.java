@@ -1,13 +1,9 @@
 package web.dao;
 
 import org.springframework.stereotype.Repository;
-import web.model.Role;
 import web.model.User;
-
 import javax.persistence.*;
-import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 @Repository
 public class UserDaoImpl implements UserDao {
@@ -17,7 +13,10 @@ public class UserDaoImpl implements UserDao {
 
     @Override
     public User getUserByName(String name) {
-       return entityManager.find(User.class,name);
+        Query q = entityManager.createQuery("select u from User u where  u.username=:name");
+        q.setParameter("name",name);
+        return (User) q.getSingleResult();
+        //return entityManager.find(User.class,name);
     }
 
     @Override

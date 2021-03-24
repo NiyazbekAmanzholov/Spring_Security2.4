@@ -6,11 +6,11 @@
     <title>create</title>
 </head>
 <body>
-<form action="#" th:action="@{adduser}" th:object="${user}" method="post">
+<form action="#" th:action="@{/admin/adduser}" th:object="${user}" method="post">
     <label for="name">Name</label>
     <input type="text" th:field="*{username}" id="name" placeholder="Name">
-    <label for="lastName">password</label>
-    <input type="text" th:field="*{password}" id="lastName" placeholder="lastname">
+    <label for="password">password</label>
+    <input type="text" th:field="*{password}" id="password" placeholder="password">
     <p>
         <label>Roles:
             <input type="checkbox" name="authorities"

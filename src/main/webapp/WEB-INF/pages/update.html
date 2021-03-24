@@ -6,7 +6,7 @@
     <title>update</title>
 </head>
 <body>
-<form  action="#" th:action="@{/users/update}" th:object="${user}" method="post">
+<form  action="#" th:action="@{/admin/update}" th:object="${user}" method="post">
     <input type="hidden" th:field="*{id}" th:value="${user.id}">
     <label for="name">Name</label>
     <input type="text" th:field="*{username}" id="name" placeholder="Name" th:value="${user.username}">
