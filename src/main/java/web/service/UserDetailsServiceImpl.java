@@ -16,21 +16,24 @@ import java.util.List;
 import java.util.Set;
 
 @Service
-@Transactional
 public class UserDetailsServiceImpl implements UserDetailsService,UserService {
 
-    private final UserDao userDao;
-    private final RoleService roleService;
-    private final PasswordEncoder passwordEncoder;
+    private UserDao userDao;
+    private RoleService roleService;
+    private PasswordEncoder passwordEncoder;
 
     @Autowired
-    public UserDetailsServiceImpl(UserDao userDao, RoleService roleService, PasswordEncoder passwordEncoder) {
+    public void setUserDaoAndEncoder(UserDao userDao,
+                                     PasswordEncoder passwordEncoder,
+                                     RoleService roleService) {
         this.userDao = userDao;
-        this.roleService = roleService;
         this.passwordEncoder = passwordEncoder;
+        this.roleService = roleService;
     }
 
+
     @Override
+    @Transactional
     public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
         User user = userDao.getUserByName(s);
         if(user==null) {
@@ -41,6 +44,7 @@ public class UserDetailsServiceImpl implements UserDetailsService,UserService {
     }
 
     @Override
+    @Transactional
     public void add(User user) {
 
         User userToSave = new User();
@@ -51,26 +55,31 @@ public class UserDetailsServiceImpl implements UserDetailsService,UserService {
     }
 
     @Override
+    @Transactional
     public void update(User user) {
         userDao.update(user);
     }
 
     @Override
+    @Transactional
     public void remove(Long id) {
         userDao.remove(id);
     }
 
     @Override
+    @Transactional
     public List<User> getUsers() {
         return userDao.getUsers();
     }
 
     @Override
+    @Transactional
     public User findById(Long id) {
         return  userDao.findById(id);
     }
 
     @Override
+    @Transactional
     public User getUserByName(String name) {
         return userDao.getUserByName(name);
     }

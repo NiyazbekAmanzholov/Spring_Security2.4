@@ -22,34 +22,35 @@ import web.config.handler.LoginSuccessHandler;
 @ComponentScan("web")
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-    private UserDetailsService userDetailsService;
+    private UserDetailsService userService;
 
     @Autowired
-    public void setUserDetailsService(UserDetailsService userDetailsService) {
-        this.userDetailsService = userDetailsService;
-    }
-
-    @Autowired
-    @Override
-    public void configure(AuthenticationManagerBuilder auth) throws Exception {
-
-        auth.authenticationProvider(daoAuthenticationProvider());
+    public void setUserService(UserDetailsService userService) {
+        this.userService = userService;
     }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.formLogin()
-                // указываем страницу с формой логина
-                .loginPage("/login")
-                //указываем логику обработки при логине
-                .successHandler(new LoginSuccessHandler())
-                // указываем action с формы логина
-                .loginProcessingUrl("/login")
-                // Указываем параметры логина и пароля с формы логина
+        http
+                .formLogin()
+                //.loginPage("/login")
                 .usernameParameter("j_username")
                 .passwordParameter("j_password")
-                // даем доступ к форме логина всем
+                .loginProcessingUrl("/login")
+                .successHandler(new LoginSuccessHandler())
+                //.failureHandler(new loginFailureHandler())
                 .permitAll();
+//                // указываем страницу с формой логина
+//                .loginPage("/login")
+//                //указываем логику обработки при логине
+//                // указываем action с формы логина
+//                // Указываем параметры логина и пароля с формы логина
+//                .usernameParameter("j_username")
+//                .passwordParameter("j_password")
+//                .successHandler(new LoginSuccessHandler())
+//                .failureForwardUrl("/users")
+////                 даем доступ к форме логина всем
+//                .permitAll();
 
         http.logout()
                 // разрешаем делать логаут всем
@@ -66,21 +67,28 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 //страницы аутентификаци доступна всем
                 .antMatchers("/login").anonymous()
-                // защищенные URL
-                .antMatchers("/hello").access("hasAnyRole('ADMIN')").anyRequest().authenticated()
                 .antMatchers("/user").access("hasAnyRole('ADMIN', 'USER')")
-                .antMatchers("/admin/**").access("hasAnyRole('ADMIN')");
+                .antMatchers("/admin/**").access("hasAnyRole('ADMIN')")
+                // защищенные URL
+                .antMatchers("/hello").access("hasAnyRole('ADMIN')").anyRequest().authenticated();
+
+    }
+
+    @Override
+    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+        auth.authenticationProvider(authenticationProvider());
     }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder(11);
+        return new BCryptPasswordEncoder(12);
     }
 
-    public DaoAuthenticationProvider daoAuthenticationProvider(){
-        final DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
-        provider.setUserDetailsService(userDetailsService);
-        provider.setPasswordEncoder(passwordEncoder());
-        return provider;
+    @Bean
+    public DaoAuthenticationProvider authenticationProvider() {
+        final DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
+        authProvider.setUserDetailsService(userService);
+        authProvider.setPasswordEncoder(passwordEncoder());
+        return authProvider;
     }
 }

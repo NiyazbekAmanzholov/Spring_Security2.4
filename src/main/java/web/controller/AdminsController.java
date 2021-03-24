@@ -22,7 +22,7 @@ public class AdminsController {
     private RoleService roleService;
 
     @Autowired
-    public void setUserDetailsService(UserService userService) {
+    public void setUserService(UserService userService) {
         this.userService = userService;
     }
 
